@@ -1,0 +1,3 @@
+All that the brain has to work with are imperfect incoming electrical impulses announcing that
+things are happening. It is then the job of neurons to rapidly interpret these signals as well as
+they can, and suggest how to react.
