@@ -176,6 +176,80 @@ for(i in 1:length(nsubs)){
 new<- subset(new, blink=="NONE")
 new$blink<- NULL
 
+
+############################################
+# Extra code for corr_sacc project:
+############################################
+
+# add previous fixation to the data set
+
+new$prev_fix_dur<- NA
+new_dat<- NULL
+
+nsubs<- unique(new$sub)
+
+for(i in 1:length(nsubs)){
+  cat(i); cat(' ')
+  n<- subset(new, sub== nsubs[i])
+  
+  nitems<- unique(n$item)
+  
+  for(j in 1:length(nitems)){
+    m<- subset(n, item== nitems[j])
+    
+    for(k in 1:nrow(m)){
+      if(k>1){
+        m$prev_fix_dur[k]<- m$fix_dur[k-1] 
+      }
+      
+      if(k==1){
+        m$prev_fix_dur[k]<-NA
+      }
+      
+    }
+    new_dat<- rbind(new_dat, m)
+  }
+}
+
+new<- new_dat
+
+new_dat<- NULL
+
+# #######################################
+# # Calculate character from start of line:
+# 
+# load("corpus/text_coords.Rda")
+# 
+# new_dat<- NULL
+# 
+# new$launch_site<- NA # launch site relative to start of the line:
+# new_dat<- NULL
+# 
+# nsubs<- unique(new$sub)
+# 
+# for(i in 1:length(nsubs)){
+#   cat(i); cat(' ')
+#   n<- subset(new, sub== nsubs[i])
+#   
+#   nitems<- unique(n$item)
+#   
+#   for(j in 1:length(nitems)){
+#     
+#     m<- subset(n, item== nitems[j])
+#     
+#     new_dat<- rbind(new_dat, m)
+#     
+#   }
+#   
+# }
+
+
+###########################################
+
+
+
+
+
 library(EMreading)
 new$wordID<- iconv(new$wordID, "ASCII", "UTF-8", sub="byte")
 new<- Frequency(new, database = "SUBTLEX-US")
@@ -185,6 +259,9 @@ DPP<- 40/1600 # degree per pixel in the experiment
 
 new$LandStartVA<- (new$xPos-171)*DPP
 new$prevVA<- (new$prevX-171)*DPP
+
+save(new, file= 'data/provo_all_fix.Rda')
+
 
 provo<- subset(new, Rtn_sweep==1)
 provo$undersweep_prob<- ifelse(provo$Rtn_sweep_type=="under-sweep", 1,0)
